@@ -1,44 +1,93 @@
 const chatForm = document.getElementById('chat-form');
-const userInput = document.getElementById('user-input');
 const chatLog = document.getElementById('chat-log');
+const userInput = document.getElementById('user-input');
 
-chatForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  
-  const userMessage = userInput.value.trim();
-  if (userMessage === '') return;
+// إضافة مفتاح API الخاص بك من OpenAI هنا
+const API_KEY = 'YOUR_OPENAI_API_KEY'; // استبدل بـ مفتاح API الخاص بك
+const ENDPOINT = 'https://api.openai.com/v1/completions';
 
-  addMessage(userMessage, 'user');
-  userInput.value = '';
-  
-  const botResponse = await getBotResponse(userMessage);
-  addMessage(botResponse, 'bot');
+// إضافة بعض الرسائل المبدئية
+const initialMessages = [
+  "مرحبًا! أنا شات بوت AI. كيف يمكنني مساعدتك اليوم؟",
+  "إذا كنت بحاجة للمساعدة، فقط اكتب السؤال وسأجيب عليك!"
+];
+
+const loadingMessage = "جارٍ معالجة طلبك...";
+
+let conversationHistory = [];  // لتخزين المحادثات السابقة
+
+// إضافة الرسائل الأولية عند فتح الموقع
+initialMessages.forEach(msg => {
+  chatLog.innerHTML += `<div class="bot-message">${msg}</div>`;
 });
 
-function addMessage(message, sender) {
-  const messageElement = document.createElement('div');
-  messageElement.classList.add(sender);
-  messageElement.textContent = message;
-  chatLog.appendChild(messageElement);
-  
-  // Scroll to the bottom
+chatLog.scrollTop = chatLog.scrollHeight;
+
+// إظهار الرسالة أثناء الانتظار
+function showLoading() {
+  chatLog.innerHTML += `<div class="bot-message loading">${loadingMessage}</div>`;
   chatLog.scrollTop = chatLog.scrollHeight;
 }
 
-async function getBotResponse(message) {
-  // Here, you would integrate with your API or AI model, such as GPT
-  // For now, we return a mock response
-  
-  const mockResponses = [
-    "أهلاً، كيف يمكنني مساعدتك؟",
-    "هذا سؤال مثير! دعني أفكر...",
-    "أريد مساعدتك في كل ما تحتاجه!",
-    "هل لديك المزيد من الأسئلة؟"
-  ];
+// إخفاء الرسالة أثناء الانتظار بعد استلام الرد
+function hideLoading() {
+  const loadingElement = chatLog.querySelector('.loading');
+  if (loadingElement) {
+    loadingElement.remove();
+  }
+}
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockResponses[Math.floor(Math.random() * mockResponses.length)]);
-    }, 1000); // Mock delay
-  });
+// التعامل مع إرسال النموذج
+chatForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const userMessage = userInput.value;
+  if (userMessage.trim() === "") return;
+
+  // عرض السؤال في واجهة الدردشة
+  chatLog.innerHTML += `<div class="user-message">${userMessage}</div>`;
+  userInput.value = '';
+  chatLog.scrollTop = chatLog.scrollHeight;
+
+  // حفظ المحادثة
+  conversationHistory.push({ role: 'user', content: userMessage });
+
+  // إظهار رسالة الانتظار
+  showLoading();
+
+  // إرسال السؤال إلى API الخاص بـ OpenAI
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'text-davinci-003',
+        prompt: generatePrompt(),
+        max_tokens: 150,
+      }),
+    });
+
+    const data = await response.json();
+
+    // عرض إجابة البوت في واجهة الدردشة
+    const botMessage = data.choices[0].text.trim();
+    chatLog.innerHTML += `<div class="bot-message">${botMessage}</div>`;
+    chatLog.scrollTop = chatLog.scrollHeight;
+
+    // حفظ المحادثة
+    conversationHistory.push({ role: 'assistant', content: botMessage });
+    hideLoading();
+  } catch (error) {
+    hideLoading();
+    chatLog.innerHTML += `<div class="bot-message">حدث خطأ، يرجى المحاولة مرة أخرى.</div>`;
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+});
+
+// إنشاء نص المحادثة بناءً على المحادثات السابقة
+function generatePrompt() {
+  return conversationHistory.map(msg => `${msg.role === 'user' ? 'أنت: ' : 'البوت: '}${msg.content}`).join('\n');
 }
