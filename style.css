@@ -1,80 +1,118 @@
+/* إعدادات عامّة */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
+  font-family: Arial, sans-serif;
   background-color: #121212;
-  color: #ffffff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  height: 100vh;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
 }
 
+/* إعدادات حاوية الشات */
 .chat-container {
   width: 100%;
   max-width: 600px;
-  height: 90vh;
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  border: 1px solid #333;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: #1e1e1e;
+  height: 80vh;
 }
 
+/* إعدادات سجل المحادثة */
 .chat-log {
-  flex: 1;
-  padding: 15px;
+  flex-grow: 1;
+  margin-bottom: 20px;
   overflow-y: auto;
+  padding-right: 10px;
 }
 
-.chat-log div {
-  margin-bottom: 10px;
-  line-height: 1.5;
+/* الرسائل (المستخدم والبوت) */
+.bot-message, .user-message {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 80%;
+  word-wrap: break-word;
 }
 
-.chat-log .user {
-  text-align: right;
-  color: #00ffcc;
+.bot-message {
+  background-color: #333;
+  color: #f1f1f1;
+  align-self: flex-start;
 }
 
-.chat-log .bot {
-  text-align: left;
-  color: #cccccc;
+.user-message {
+  background-color: #0084ff;
+  color: #fff;
+  align-self: flex-end;
 }
 
+/* التأثيرات أثناء الانتظار */
+.bot-message.loading {
+  background-color: #555;
+  color: #ccc;
+  font-style: italic;
+}
+
+/* إعدادات نموذج الإدخال */
 .chat-form {
   display: flex;
-  border-top: 1px solid #333;
-  padding: 10px;
-  background-color: #1e1e1e;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.chat-form input {
-  flex: 1;
+#user-input {
+  width: 80%;
   padding: 10px;
   border: none;
-  border-radius: 4px;
-  margin-right: 10px;
+  border-radius: 20px;
   font-size: 16px;
-  background-color: #2c2c2c;
+  background-color: #333;
+  color: #fff;
+}
+
+button {
+  background-color: #0084ff;
   color: white;
-}
-
-.chat-form button {
-  padding: 10px 15px;
   border: none;
-  border-radius: 4px;
-  background-color: #00ffcc;
-  color: #000;
-  font-weight: bold;
+  border-radius: 50%;
+  padding: 10px 15px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
-.chat-form button:hover {
-  background-color: #00e6b8;
+button:hover {
+  background-color: #006bb3;
+}
+
+button:active {
+  background-color: #005499;
+}
+
+/* التأثيرات على حاوية الشات عند التمرير */
+.chat-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+}
+
+.chat-container::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
