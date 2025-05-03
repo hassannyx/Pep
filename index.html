@@ -1,20 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Chatbot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شات بوت AI</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="chat-container">
+    <!-- مكان عرض المحادثة -->
     <div id="chat-log" class="chat-log"></div>
+
+    <!-- نموذج إرسال الرسائل -->
     <form id="chat-form" class="chat-form">
-      <input type="text" id="user-input" placeholder="اكتب رسالتك..." autocomplete="off" required />
+      <input type="text" id="user-input" placeholder="أكتب هنا..." />
       <button type="submit">إرسال</button>
     </form>
   </div>
-  
+
   <script src="script.js"></script>
 </body>
 </html>
